@@ -21,18 +21,16 @@ import Link from "next/link";
 
 export const UserSchema = z.object({
   id: z.string().optional(),
-  email: z.string().email(),
-  password: z.string().min(8),
+  confirmationCode: z.string().min(2),
 });
 
 export type IUserSchema = z.infer<typeof UserSchema>;
 
-const AuthSignInFeature = () => {
+const AuthConfirmationWindowFeature = () => {
   const form = useForm<IUserSchema>({
     resolver: zodResolver(UserSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      confirmationCode: "",
     },
   });
 
@@ -59,11 +57,12 @@ const AuthSignInFeature = () => {
       <div className="flex border border-[#DBDBDB] rounded-tr-[30px] rounded-br-[30px] w-full max-w-7xl h-[85vh]">
         <div className="w-1/2">
           <Image
-            src="/images/signin-img.jpg"
-            alt="Signin Image"
+            src="/images/confirmationcode-img.jpg"
+            alt="Confrimation Code Image"
             width={949}
             height={1077}
             className="w-full h-full object-cover"
+            priority
           />
         </div>
 
@@ -73,60 +72,21 @@ const AuthSignInFeature = () => {
           </h1>
 
           <div className="px-28 flex-grow flex flex-col justify-center">
-            <h2 className="font-normal text-2xl leading-10 tracking-normal">
-              Sign In To FASCO
+            <h2 className="font-normal text-2xl leading-10 tracking-normal pb-10">
+              Enter The Confirmation Code
             </h2>
-            <div className="flex justify-between items-center pt-2">
-              <Button variant="outline">
-                <Image
-                  src="/images/google-img.png"
-                  alt="Google Icon"
-                  width={20}
-                  height={20}
-                />{" "}
-                Sign up with Google
-              </Button>
-              <Button variant="outline">
-                <Image
-                  src="/images/gmail-img.png"
-                  alt="Gmail Icon"
-                  width={20}
-                  height={20}
-                />{" "}
-                Sign up with Email
-              </Button>
-            </div>
-
-            <div className="text-muted-foreground text-xl font-bold leading-10 tracking-[0.08em] py-10 text-center">
-              — OR —
-            </div>
 
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit((values) => mutate(values))}
-                className="space-y-4"
-              >
+              <form onSubmit={form.handleSubmit((values) => mutate(values))}>
                 <FormField
                   control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input placeholder="Email" type="email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
+                  name="confirmationCode"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="Password"
-                          type="password"
+                          placeholder="Confirmation Code"
+                          type="text"
                           {...field}
                         />
                       </FormControl>
@@ -135,29 +95,19 @@ const AuthSignInFeature = () => {
                   )}
                 />
 
-                <div className="px-4">
+                <div className="px-4 pt-4 space-y-1.5">
                   <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? "Loading..." : "Sign In"}
+                    {isPending ? "Loading..." : "Recover Account"}
                   </Button>
+                  <div className="flex justify-center items-center gap-1 font-normal text-sm leading-10 tracking-[8%]">
+                    <span>Didn’t receive Confirmation Code?</span>
+                    <Link href="/auth/sign-in" className="text-blue-500">
+                      Resend Now
+                    </Link>
+                  </div>
                 </div>
               </form>
             </Form>
-
-            <div className="px-4 py-3">
-              <Button variant="outline" className="w-full" asChild>
-                <a href="/auth/sign-up" className="text-blue-500">
-                  Register Now
-                </a>
-              </Button>
-              <div className="flex justify-end">
-                <Link
-                  href="/auth/forget-password"
-                  className="text-blue-500 font-bold text-sm"
-                >
-                  Forget Password?
-                </Link>
-              </div>
-            </div>
           </div>
 
           <p className="pr-14 pb-4 text-sm font-normal text-right">
@@ -169,4 +119,4 @@ const AuthSignInFeature = () => {
   );
 };
 
-export default AuthSignInFeature;
+export default AuthConfirmationWindowFeature;

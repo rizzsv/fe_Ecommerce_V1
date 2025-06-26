@@ -17,22 +17,31 @@ import { useMutation } from "@tanstack/react-query";
 import { axiosInstanceToken } from "@/lib/axios";
 import { toast } from "sonner";
 import { setCookie } from "@/lib/utils";
-import Link from "next/link";
 
-export const UserSchema = z.object({
-  id: z.string().optional(),
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+export const UserSchema = z
+  .object({
+    id: z.string().optional(),
+    newPassword: z.string().min(8),
+    confirmationPassword: z.string().min(8),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword !== data.confirmationPassword) {
+      ctx.addIssue({
+        path: ["confirmationPassword"],
+        code: z.ZodIssueCode.custom,
+        message: "Passwords do not match",
+      });
+    }
+  });
 
 export type IUserSchema = z.infer<typeof UserSchema>;
 
-const AuthSignInFeature = () => {
+const AuthNewPasswordFeature = () => {
   const form = useForm<IUserSchema>({
     resolver: zodResolver(UserSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      newPassword: "",
+      confirmationPassword: "",
     },
   });
 
@@ -59,11 +68,12 @@ const AuthSignInFeature = () => {
       <div className="flex border border-[#DBDBDB] rounded-tr-[30px] rounded-br-[30px] w-full max-w-7xl h-[85vh]">
         <div className="w-1/2">
           <Image
-            src="/images/signin-img.jpg"
-            alt="Signin Image"
+            src="/images/newpassword-img.jpg"
+            alt="New Password Image"
             width={949}
             height={1077}
             className="w-full h-full object-cover"
+            priority
           />
         </div>
 
@@ -73,33 +83,9 @@ const AuthSignInFeature = () => {
           </h1>
 
           <div className="px-28 flex-grow flex flex-col justify-center">
-            <h2 className="font-normal text-2xl leading-10 tracking-normal">
-              Sign In To FASCO
+            <h2 className="font-normal text-2xl leading-10 tracking-normal pb-10">
+              Enter Your New Password
             </h2>
-            <div className="flex justify-between items-center pt-2">
-              <Button variant="outline">
-                <Image
-                  src="/images/google-img.png"
-                  alt="Google Icon"
-                  width={20}
-                  height={20}
-                />{" "}
-                Sign up with Google
-              </Button>
-              <Button variant="outline">
-                <Image
-                  src="/images/gmail-img.png"
-                  alt="Gmail Icon"
-                  width={20}
-                  height={20}
-                />{" "}
-                Sign up with Email
-              </Button>
-            </div>
-
-            <div className="text-muted-foreground text-xl font-bold leading-10 tracking-[0.08em] py-10 text-center">
-              — OR —
-            </div>
 
             <Form {...form}>
               <form
@@ -108,11 +94,15 @@ const AuthSignInFeature = () => {
               >
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="newPassword"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Email" type="email" {...field} />
+                        <Input
+                          placeholder="New Password"
+                          type="password"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -120,12 +110,12 @@ const AuthSignInFeature = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="password"
+                  name="confirmationPassword"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="Password"
+                          placeholder="Confirmation Password"
                           type="password"
                           {...field}
                         />
@@ -136,28 +126,17 @@ const AuthSignInFeature = () => {
                 />
 
                 <div className="px-4">
-                  <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? "Loading..." : "Sign In"}
+                  <Button
+                    variant="accent"
+                    type="submit"
+                    className="w-full"
+                    disabled={isPending}
+                  >
+                    {isPending ? "Loading..." : "Submit"}
                   </Button>
                 </div>
               </form>
             </Form>
-
-            <div className="px-4 py-3">
-              <Button variant="outline" className="w-full" asChild>
-                <a href="/auth/sign-up" className="text-blue-500">
-                  Register Now
-                </a>
-              </Button>
-              <div className="flex justify-end">
-                <Link
-                  href="/auth/forget-password"
-                  className="text-blue-500 font-bold text-sm"
-                >
-                  Forget Password?
-                </Link>
-              </div>
-            </div>
           </div>
 
           <p className="pr-14 pb-4 text-sm font-normal text-right">
@@ -169,4 +148,4 @@ const AuthSignInFeature = () => {
   );
 };
 
-export default AuthSignInFeature;
+export default AuthNewPasswordFeature;

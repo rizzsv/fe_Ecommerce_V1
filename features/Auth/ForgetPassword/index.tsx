@@ -18,45 +18,30 @@ import { axiosInstanceToken } from "@/lib/axios";
 import { toast } from "sonner";
 import { setCookie } from "@/lib/utils";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 
-export const UserSchema = z
-  .object({
-    id: z.string().optional(),
-    email: z.string().email(),
-    username: z.string().min(3).max(20),
-    phoneNum: z.string().min(10).max(15),
-    password: z.string().min(8),
-    confirmPassword: z.string().min(8),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
-      ctx.addIssue({
-        path: ["confirmPassword"],
-        code: z.ZodIssueCode.custom,
-        message: "Passwords do not match",
-      });
-    }
-  });
+export const UserSchema = z.object({
+  id: z.string().optional(),
+  email: z.string().email(),
+  username: z.string().min(3).max(20),
+  phoneNum: z.string().min(10).max(15),
+});
 
 export type IUserSchema = z.infer<typeof UserSchema>;
 
-const AuthSignUpFeature = () => {
+const AuthForgetPasswordFeature = () => {
   const form = useForm<IUserSchema>({
     resolver: zodResolver(UserSchema),
     defaultValues: {
       email: "",
       username: "",
       phoneNum: "",
-      password: "",
-      confirmPassword: "",
     },
   });
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (values: IUserSchema) => {
       const response = await axiosInstanceToken.post(
-        "/E-Commerce/api/v1/user",
+        "/v1/api/auth/login",
         values
       );
       return response.data;
@@ -64,7 +49,7 @@ const AuthSignUpFeature = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       setCookie(data.data.token);
-      window.location.href = "/auth/sign-in";
+      window.location.href = "/dashboard";
     },
     onError: (error: any) => {
       toast.error(error.response.data.message);
@@ -76,8 +61,8 @@ const AuthSignUpFeature = () => {
       <div className="flex border border-[#DBDBDB] rounded-tr-[30px] rounded-br-[30px] w-full max-w-7xl h-[85vh]">
         <div className="w-1/2">
           <Image
-            src="/images/signup-img.jpg"
-            alt="Signup Image"
+            src="/images/forgetpassword-img.jpg"
+            alt="Forget Password Image"
             width={949}
             height={1077}
             className="w-full h-full object-cover"
@@ -91,37 +76,9 @@ const AuthSignUpFeature = () => {
           </h1>
 
           <div className="px-28 flex-grow flex flex-col justify-center">
-            <h2 className="font-normal text-2xl leading-10 tracking-normal">
-              Create Account
+            <h2 className="font-normal text-2xl leading-10 tracking-normal pb-10">
+              Forget Password
             </h2>
-            <div className="flex justify-between items-center pt-2">
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => signIn("google", { callbackUrl: "/" })}
-              >
-                <Image
-                  src="/images/google-img.png"
-                  alt="Google Icon"
-                  width={20}
-                  height={20}
-                />{" "}
-                Sign up with Google
-              </Button>
-              <Button variant="outline">
-                <Image
-                  src="/images/gmail-img.png"
-                  alt="Gmail Icon"
-                  width={20}
-                  height={20}
-                />{" "}
-                Sign up with Email
-              </Button>
-            </div>
-
-            <div className="text-muted-foreground text-xl font-bold leading-10 tracking-[0.08em] py-10 text-center">
-              — OR —
-            </div>
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit((values) => mutate(values))}>
@@ -159,51 +116,16 @@ const AuthSignUpFeature = () => {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="phoneNum"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Phone Number"
-                            type="tel"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Password"
-                            type="password"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
-
                 <FormField
                   control={form.control}
-                  name="confirmPassword"
+                  name="phoneNum"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="Confirm Password"
-                          type="password"
+                          placeholder="Phone Number"
+                          type="tel"
                           {...field}
                         />
                       </FormControl>
@@ -214,7 +136,7 @@ const AuthSignUpFeature = () => {
 
                 <div className="px-4 pt-4 space-y-1.5">
                   <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? "Loading..." : "Create Account"}
+                    {isPending ? "Loading..." : "Send Confirmation Code"}
                   </Button>
                   <div className="flex justify-center items-center gap-1 font-normal text-sm leading-10 tracking-[8%]">
                     <span>Already have an account?</span>
@@ -236,4 +158,4 @@ const AuthSignUpFeature = () => {
   );
 };
 
-export default AuthSignUpFeature;
+export default AuthForgetPasswordFeature;
