@@ -8,51 +8,25 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { useMutation } from "@tanstack/react-query";
-import { axiosInstanceToken } from "@/lib/axios";
-import { toast } from "sonner";
-import { setCookie } from "@/lib/utils";
 import Link from "next/link";
-
-export const UserSchema = z.object({
-  id: z.string().optional(),
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-export type IUserSchema = z.infer<typeof UserSchema>;
+import { signIn } from "next-auth/react";
+import { SignInSchema, ISignInSchema } from "./schema";
+import useSignIn from "./hook/useSignIn";
 
 const AuthSignInFeature = () => {
-  const form = useForm<IUserSchema>({
-    resolver: zodResolver(UserSchema),
+  const form = useForm<ISignInSchema>({
+    resolver: zodResolver(SignInSchema),
     defaultValues: {
-      email: "",
+      identity: "",
       password: "",
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (values: IUserSchema) => {
-      const response = await axiosInstanceToken.post(
-        "/v1/api/auth/login",
-        values
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.success(data.message);
-      setCookie(data.data.token);
-      window.location.href = "/dashboard";
-    },
-    onError: (error: any) => {
-      toast.error(error.response.data.message);
-    },
-  });
+  const { mutate, isPending } = useSignIn();
 
   return (
     <main className="h-screen flex justify-center items-center">
@@ -64,6 +38,7 @@ const AuthSignInFeature = () => {
             width={949}
             height={1077}
             className="w-full h-full object-cover"
+            priority
           />
         </div>
 
@@ -77,7 +52,11 @@ const AuthSignInFeature = () => {
               Sign In To FASCO
             </h2>
             <div className="flex justify-between items-center pt-2">
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+              >
                 <Image
                   src="/images/google-img.png"
                   alt="Google Icon"
@@ -108,11 +87,15 @@ const AuthSignInFeature = () => {
               >
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="identity"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Email" type="email" {...field} />
+                        <Input
+                          placeholder="Email or Username"
+                          type="text"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
