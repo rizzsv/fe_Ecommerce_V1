@@ -86,13 +86,14 @@ Autentikasi pengguna disimpan dalam cookie bernama `access_token`.
 
 ### ✅ Selesai
 
-- Sign In / Sign Up (via email dan Google OAuth)
+- Sign In / Sign Up (via Google OAuth)
 - Validasi form (dengan zod)
 - Proteksi halaman via middleware
+- Fetching API Sign In & Sign Up
 
 ### 🔄 Sedang/Tahap Selanjutnya
 
-- [ ] Integrasi API backend
+- [x] Integrasi API backend
 - [ ] Responsive mobile
 - [ ] Halaman dashboard pengguna
 - [ ] Katalog produk & kategori
