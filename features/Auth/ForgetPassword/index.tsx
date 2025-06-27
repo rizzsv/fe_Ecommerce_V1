@@ -8,29 +8,17 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { useMutation } from "@tanstack/react-query";
-import { axiosInstanceToken } from "@/lib/axios";
-import { toast } from "sonner";
-import { setCookie } from "@/lib/utils";
 import Link from "next/link";
-
-export const UserSchema = z.object({
-  id: z.string().optional(),
-  email: z.string().email(),
-  username: z.string().min(3).max(20),
-  phoneNum: z.string().min(10).max(15),
-});
-
-export type IUserSchema = z.infer<typeof UserSchema>;
+import { ForgetPasswordSchema, IForgetPasswordSchema } from "./schema";
+import useForgetPassword from "./hook/useForgetPassword";
 
 const AuthForgetPasswordFeature = () => {
-  const form = useForm<IUserSchema>({
-    resolver: zodResolver(UserSchema),
+  const form = useForm<IForgetPasswordSchema>({
+    resolver: zodResolver(ForgetPasswordSchema),
     defaultValues: {
       email: "",
       username: "",
@@ -38,23 +26,7 @@ const AuthForgetPasswordFeature = () => {
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (values: IUserSchema) => {
-      const response = await axiosInstanceToken.post(
-        "/v1/api/auth/login",
-        values
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.success(data.message);
-      setCookie(data.data.token);
-      window.location.href = "/dashboard";
-    },
-    onError: (error: any) => {
-      toast.error(error.response.data.message);
-    },
-  });
+  const { mutate, isPending } = useForgetPassword();
 
   return (
     <main className="h-screen flex justify-center items-center">
@@ -140,7 +112,10 @@ const AuthForgetPasswordFeature = () => {
                   </Button>
                   <div className="flex justify-center items-center gap-1 font-normal text-sm leading-10 tracking-[8%]">
                     <span>Already have an account?</span>
-                    <Link href="/auth/sign-in" className="text-blue-500">
+                    <Link
+                      href="/auth/sign-in"
+                      className="text-blue-500 hover:underline"
+                    >
                       Login
                     </Link>
                   </div>

@@ -173,7 +173,10 @@ const AuthSignUpFeature = () => {
                     </Button>
                     <div className="flex justify-center items-center gap-1 font-normal text-sm leading-10 tracking-[8%]">
                       <span>Already have an account?</span>
-                      <Link href="/auth/sign-in" className="text-blue-500">
+                      <Link
+                        href="/auth/sign-in"
+                        className="text-blue-500 hover:underline"
+                      >
                         Login
                       </Link>
                     </div>

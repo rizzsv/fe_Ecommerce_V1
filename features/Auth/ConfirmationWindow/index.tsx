@@ -8,49 +8,29 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { useMutation } from "@tanstack/react-query";
-import { axiosInstanceToken } from "@/lib/axios";
-import { toast } from "sonner";
-import { setCookie } from "@/lib/utils";
-import Link from "next/link";
-
-export const UserSchema = z.object({
-  id: z.string().optional(),
-  confirmationCode: z.string().min(2),
-});
-
-export type IUserSchema = z.infer<typeof UserSchema>;
+import { ConfirmCodeSchema, IConfirmCodeSchema } from "./schema";
+import useConfirmCode from "./hook/useConfirmationWindow";
+import useResendCode from "./hook/useResendCode";
 
 const AuthConfirmationWindowFeature = () => {
-  const form = useForm<IUserSchema>({
-    resolver: zodResolver(UserSchema),
+  const form = useForm<IConfirmCodeSchema>({
+    resolver: zodResolver(ConfirmCodeSchema),
     defaultValues: {
       confirmationCode: "",
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (values: IUserSchema) => {
-      const response = await axiosInstanceToken.post(
-        "/v1/api/auth/login",
-        values
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.success(data.message);
-      setCookie(data.data.token);
-      window.location.href = "/dashboard";
-    },
-    onError: (error: any) => {
-      toast.error(error.response.data.message);
-    },
-  });
+  const { mutate, isPending } = useConfirmCode();
+  const { mutate: resendCode, isPending: isResending } = useResendCode();
+
+  const handleResend = () => {
+    const email = localStorage.getItem("recoveryEmail");
+    if (email) resendCode(email);
+  };
 
   return (
     <main className="h-screen flex justify-center items-center">
@@ -101,9 +81,14 @@ const AuthConfirmationWindowFeature = () => {
                   </Button>
                   <div className="flex justify-center items-center gap-1 font-normal text-sm leading-10 tracking-[8%]">
                     <span>Didn’t receive Confirmation Code?</span>
-                    <Link href="/auth/sign-in" className="text-blue-500">
-                      Resend Now
-                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleResend}
+                      className="text-blue-500 hover:underline disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      disabled={isResending}
+                    >
+                      {isResending ? "Resending..." : "Resend Now"}
+                    </button>
                   </div>
                 </div>
               </form>

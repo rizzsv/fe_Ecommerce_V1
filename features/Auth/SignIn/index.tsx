@@ -135,7 +135,7 @@ const AuthSignInFeature = () => {
               <div className="flex justify-end">
                 <Link
                   href="/auth/forget-password"
-                  className="text-blue-500 font-bold text-sm"
+                  className="text-blue-500 font-bold text-sm hover:underline"
                 >
                   Forget Password?
                 </Link>

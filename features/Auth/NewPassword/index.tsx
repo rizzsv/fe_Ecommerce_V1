@@ -8,60 +8,23 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { useMutation } from "@tanstack/react-query";
-import { axiosInstanceToken } from "@/lib/axios";
-import { toast } from "sonner";
-import { setCookie } from "@/lib/utils";
-
-export const UserSchema = z
-  .object({
-    id: z.string().optional(),
-    newPassword: z.string().min(8),
-    confirmationPassword: z.string().min(8),
-  })
-  .superRefine((data, ctx) => {
-    if (data.newPassword !== data.confirmationPassword) {
-      ctx.addIssue({
-        path: ["confirmationPassword"],
-        code: z.ZodIssueCode.custom,
-        message: "Passwords do not match",
-      });
-    }
-  });
-
-export type IUserSchema = z.infer<typeof UserSchema>;
+import { NewPasswordSchema, INewPasswordSchema } from "./schema";
+import useNewPassword from "./hook/useNewPassword";
 
 const AuthNewPasswordFeature = () => {
-  const form = useForm<IUserSchema>({
-    resolver: zodResolver(UserSchema),
+  const form = useForm<INewPasswordSchema>({
+    resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
       newPassword: "",
       confirmationPassword: "",
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (values: IUserSchema) => {
-      const response = await axiosInstanceToken.post(
-        "/v1/api/auth/login",
-        values
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.success(data.message);
-      setCookie(data.data.token);
-      window.location.href = "/dashboard";
-    },
-    onError: (error: any) => {
-      toast.error(error.response.data.message);
-    },
-  });
+  const { mutate, isPending } = useNewPassword();
 
   return (
     <main className="h-screen flex justify-center items-center">
