@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { axiosInstanceToken } from "@/lib/axios";
 import { toast } from "sonner";
-import { setCookie } from "@/lib/utils";
 import type { INewPasswordSchema } from "../schema";
 
 const useNewPassword = () => {
@@ -15,7 +14,6 @@ const useNewPassword = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message);
-      setCookie(data.data.token);
       window.location.href = "/auth/sign-in";
     },
     onError: (error: any) => {

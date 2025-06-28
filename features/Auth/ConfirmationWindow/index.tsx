@@ -20,7 +20,7 @@ const AuthConfirmationWindowFeature = () => {
   const form = useForm<IConfirmCodeSchema>({
     resolver: zodResolver(ConfirmCodeSchema),
     defaultValues: {
-      confirmationCode: "",
+      code: "",
     },
   });
 
@@ -60,7 +60,7 @@ const AuthConfirmationWindowFeature = () => {
               <form onSubmit={form.handleSubmit((values) => mutate(values))}>
                 <FormField
                   control={form.control}
-                  name="confirmationCode"
+                  name="code"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

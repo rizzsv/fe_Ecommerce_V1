@@ -1,12 +1,22 @@
-import React from "react";
-import { HeroSection } from "./section";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { HeroSection, NewArrivalsSection } from "./section";
+import { getCookie } from "@/lib/utils";
 
 const HomepageFeature = () => {
+  const [isLogged, setIsLogged] = useState(false);
+
+  useEffect(() => {
+    setIsLogged(!!getCookie());
+  }, []);
+
   return (
-    <div>
+    <main>
       <HeroSection />
-      {/* Add other sections here as needed */}
-    </div>
+      {isLogged && <NewArrivalsSection />}
+      {/* You can add more sections here as needed */}
+    </main>
   );
 };
 

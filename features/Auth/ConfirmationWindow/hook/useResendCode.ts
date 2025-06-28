@@ -5,7 +5,7 @@ import { toast } from "sonner";
 const useResendCode = () => {
   return useMutation({
     mutationFn: async (email: string) => {
-      const response = await axiosInstance.post("/v1/api/auth/resend-code", {
+      const response = await axiosInstance.post("/E-Commerce/api/v1/user/otp", {
         email,
       });
       return response.data;
