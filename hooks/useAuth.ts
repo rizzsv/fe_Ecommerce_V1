@@ -17,7 +17,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (!token || !role) return set({ data: null });
 
     try {
-      const res = await axiosInstance.get("/E-Commerce/api/v1/user/me", {
+      const res = await axiosInstance.get("/E-Commerce/api/v1/user/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       set({ data: res.data });
