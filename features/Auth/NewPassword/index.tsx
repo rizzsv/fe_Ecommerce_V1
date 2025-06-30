@@ -19,7 +19,7 @@ const AuthNewPasswordFeature = () => {
   const form = useForm<INewPasswordSchema>({
     resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
-      newPassword: "",
+      password: "",
       confirmationPassword: "",
     },
   });
@@ -57,7 +57,7 @@ const AuthNewPasswordFeature = () => {
               >
                 <FormField
                   control={form.control}
-                  name="newPassword"
+                  name="password"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

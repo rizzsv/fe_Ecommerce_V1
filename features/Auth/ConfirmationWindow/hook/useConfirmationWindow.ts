@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { axiosInstanceToken } from "@/lib/axios";
 import { toast } from "sonner";
 import type { IConfirmCodeSchema } from "../schema";
+import { setCookie } from "@/lib/utils";
 
 const useConfirmCode = () => {
   return useMutation({
@@ -14,16 +15,11 @@ const useConfirmCode = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message);
+      setCookie(data.data.token);
       window.location.href = "/auth/new-password";
     },
     onError: (error: any) => {
-      const message =
-        error?.response?.data?.message ??
-        (typeof error?.response?.data === "string"
-          ? "Server error: " + error.response.data.slice(0, 100) // crop HTML
-          : "Terjadi kesalahan");
-
-      toast.error(message);
+      toast.error(error.response.data.message);
     },
   });
 };

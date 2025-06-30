@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { axiosInstanceToken } from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 import type { IForgetPasswordSchema } from "../schema";
 
 const useForgetPassword = () => {
   return useMutation({
     mutationFn: async (values: IForgetPasswordSchema) => {
-      const response = await axiosInstanceToken.post(
+      const response = await axiosInstance.post(
         "/E-Commerce/api/v1/user/otp",
         values
       );

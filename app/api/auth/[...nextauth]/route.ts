@@ -9,9 +9,27 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    async jwt({ token, account, profile }) {
+      if (account && profile?.email) {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/google`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: profile.email }),
+        });
+
+        const data = await res.json();
+
+        token.accessToken = data.access_token;
+        token.role = data.role;
+      }
+
+      return token;
+    },
+
     async session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
+      if (session.user) {
+        session.user.accessToken = token.accessToken;
+        session.user.role = token.role;
       }
       return session;
     },

@@ -15,12 +15,13 @@ import Image from "next/image";
 import { ConfirmCodeSchema, IConfirmCodeSchema } from "./schema";
 import useConfirmCode from "./hook/useConfirmationWindow";
 import useResendCode from "./hook/useResendCode";
+import { toast } from "sonner";
 
 const AuthConfirmationWindowFeature = () => {
   const form = useForm<IConfirmCodeSchema>({
     resolver: zodResolver(ConfirmCodeSchema),
     defaultValues: {
-      code: "",
+      otp: "",
     },
   });
 
@@ -29,7 +30,18 @@ const AuthConfirmationWindowFeature = () => {
 
   const handleResend = () => {
     const email = localStorage.getItem("recoveryEmail");
-    if (email) resendCode(email);
+    const username = localStorage.getItem("recoveryUsername");
+    const phoneNum = localStorage.getItem("recoveryPhoneNum");
+
+    console.log("[handleResend]", { email, username, phoneNum });
+
+    if (email && username && phoneNum) {
+      resendCode({ email, username, phoneNum });
+    } else {
+      toast.error(
+        "Data recovery tidak lengkap. Silakan ulangi proses recovery."
+      );
+    }
   };
 
   return (
@@ -60,7 +72,7 @@ const AuthConfirmationWindowFeature = () => {
               <form onSubmit={form.handleSubmit((values) => mutate(values))}>
                 <FormField
                   control={form.control}
-                  name="code"
+                  name="otp"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

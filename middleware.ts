@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const isLogged = request.cookies.get("access_token");
-  const role = request.cookies.get("acces_role");
+  const role = request.cookies.get("access_role");
 
   if (request.nextUrl.pathname.startsWith("/dashboard") && !isLogged) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.nextUrl));

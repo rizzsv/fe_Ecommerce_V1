@@ -53,7 +53,14 @@ const AuthForgetPasswordFeature = () => {
             </h2>
 
             <Form {...form}>
-              <form onSubmit={form.handleSubmit((values) => mutate(values))}>
+              <form
+                onSubmit={form.handleSubmit((values) => {
+                  localStorage.setItem("recoveryEmail", values.email);
+                  localStorage.setItem("recoveryUsername", values.username);
+                  localStorage.setItem("recoveryPhoneNum", values.phoneNum);
+                  mutate(values);
+                })}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
                   <FormField
                     control={form.control}

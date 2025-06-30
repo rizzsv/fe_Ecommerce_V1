@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { getCookie, getRole, removeCookie, removeRole } from "@/lib/utils";
 import { axiosInstance } from "@/lib/axios";
+import { signOut } from "next-auth/react";
 
 interface AuthState {
   data: any;
@@ -8,20 +9,22 @@ interface AuthState {
   signoutHandler: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthState>((set) => ({
   data: null,
-
   getUser: async () => {
-    const token = getCookie();
-    const role = getRole();
-    if (!token || !role) return set({ data: null });
+    if (!getCookie() || !getRole()) return set({ data: null });
 
     try {
-      const res = await axiosInstance.get("/E-Commerce/api/v1/user/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      set({ data: res.data });
-    } catch (err) {
+      const response = await axiosInstance.get(
+        "/E-Commerce/api/v1/user/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie()}`,
+          },
+        }
+      );
+      set({ data: response.data });
+    } catch (error) {
       removeCookie();
       removeRole();
       set({ data: null });
@@ -29,10 +32,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  signoutHandler: () => {
+  signoutHandler: async () => {
     removeCookie();
     removeRole();
     set({ data: null });
-    window.location.href = "/";
+    await signOut({ callbackUrl: "/" });
   },
 }));
+
+export default useAuthStore;

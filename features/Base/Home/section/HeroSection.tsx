@@ -1,5 +1,5 @@
 const HeaderSection = () => {
-  return <section>Header Section</section>;
+  return <section className="container">Header Section</section>;
 };
 
 export default HeaderSection;
