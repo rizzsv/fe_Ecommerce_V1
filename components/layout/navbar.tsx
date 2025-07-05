@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import useAuthStore from "@/hooks/useAuth";
 import { useShallow } from "zustand/react/shallow";
 import { getCookie, getRole } from "@/lib/utils";
-import { Search, Star, ShoppingCart } from "lucide-react";
+import { Search, Star, ShoppingBag } from "lucide-react";
 import ActionUserMenu from "../common/action-user-menu";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Button } from "../ui/button";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -35,10 +36,10 @@ const Navbar = () => {
   ];
 
   const NAVBAR_GUEST = [
-    { name: "Home", path: "/" },
-    { name: "Deals", path: "/deals" },
-    { name: "New Arrivals", path: "/new-arrivals" },
-    { name: "Packages", path: "/packages" },
+    { name: "Home", path: "#header" },
+    { name: "Deals", path: "#deals" },
+    { name: "New Arrivals", path: "#new-arrivals" },
+    { name: "Packages", path: "#packages" },
     { name: "Sign In", path: "/auth/sign-in" },
     { name: "Sign Up", path: "/auth/sign-up" },
   ];
@@ -55,8 +56,8 @@ const Navbar = () => {
   }, [pathname, status, getUser, data]);
 
   return (
-    <nav className="container sticky top-0 z-50 backdrop-blur bg-white/25">
-      <div className="flex justify-between items-center py-14">
+    <nav className="container sticky top-0 z-50 bg-white rounded-[10px]">
+      <div className="flex justify-between items-center py-2 mt-8">
         <Link href="/" className="shrink-0">
           <span className="text-5xl font-spaceGrotesk font-normal tracking-normal leading-[100%]">
             FASCO
@@ -94,22 +95,33 @@ const Navbar = () => {
                 onClick={() => (window.location.href = "/wishlist")}
               />
 
-              <ShoppingCart
+              <ShoppingBag
                 className="cursor-pointer"
                 onClick={() => (window.location.href = "/cart")}
               />
             </div>
           </div>
         ) : (
-          <ul className="flex items-center space-x-14">
+          <ul className="flex items-center gap-x-14">
             {NAVBAR_GUEST.map((item) => (
               <li key={item.name}>
-                <Link
-                  href={item.path}
-                  className="text-base font-normal tracking-normal leading-[100%]"
-                >
-                  {item.name}
-                </Link>
+                {item.name === "Sign Up" ? (
+                  <Link href={item.path}>
+                    <Button
+                      variant="default"
+                      className="px-10 py-5 rounded-[10px] shadow-[0px_20px_35px_0px_#00000026]"
+                    >
+                      {item.name}
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link
+                    href={item.path}
+                    className="text-base font-normal tracking-normal leading-[100%]"
+                  >
+                    {item.name}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

@@ -18,7 +18,7 @@ const useSignIn = () => {
       setCookie(data.data.token);
       setRole(data.data.role);
       if (data.data.role === "USER") {
-        window.location.href = "/";
+        window.location.href = "/shop";
       } else {
         window.location.href = "/dashboard";
       }

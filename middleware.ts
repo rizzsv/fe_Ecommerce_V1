@@ -8,6 +8,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.nextUrl));
   }
 
+  if (request.nextUrl.pathname.startsWith("/shop") && !isLogged) {
+    return NextResponse.redirect(new URL("/auth/sign-in", request.nextUrl));
+  }
+
   if (
     request.nextUrl.pathname.startsWith("/dashboard") &&
     isLogged &&
