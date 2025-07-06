@@ -15,7 +15,7 @@ const useDashboardProductDetailsFeature = (slug: string) => {
   const { mutate: deleteProduct } = useMutation({
     mutationFn: async (id: string) => {
       const response = await axiosInstanceToken.delete(
-        `/v1/api/product/${data?.data?.id}`
+        `/E-Commerce/api/v1/product/${data?.data?.id}`
       );
       return response.data;
     },

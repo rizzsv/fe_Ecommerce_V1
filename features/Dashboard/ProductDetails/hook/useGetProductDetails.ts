@@ -5,7 +5,9 @@ const useGetProductDetails = (slug: string) => {
   return useQuery({
     queryKey: ["product", slug],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/v1/api/product/${slug}`);
+      const response = await axiosInstance.get(
+        `/E-Commerce/api/v1/product/${slug}`
+      );
       return response.data;
     },
   });
