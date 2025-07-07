@@ -30,8 +30,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { IProductSchema } from "./hook/schema";
-import { dummySneakersProducts } from "@/lib/dummyProduct";
 import { format } from "date-fns";
+import { useParams } from "next/navigation";
 import ActionDashboardDetail from "@/components/common/action-dashboard-detail";
 
 const DashboardProductDetailsFeature = ({
@@ -41,12 +41,13 @@ const DashboardProductDetailsFeature = ({
 }) => {
   console.log("params.slug in DashboardProductDetailsFeature:", params.slug);
   const { router, data, isLoading, deleteProduct } =
-    useDashboardProductDetailsFeature(params.slug);
+    useDashboardProductDetailsFeature(`dashboard/product/${params.slug}`);
   const pathname = usePathname();
 
   const { data: dataCategory, isLoading: isLoadingCategory } = useGetCategory();
 
-  const dummy = dummySneakersProducts;
+  const routeParams = useParams();
+  const slug = routeParams?.slug
 
   return (
     <main className="w-full h-full bg-white rounded-3xl border p-6 space-y-6">
@@ -74,7 +75,7 @@ const DashboardProductDetailsFeature = ({
           <Button
             variant="accent"
             onClick={() =>
-              router.push(`/dashboard/product/${params.slug}/add-product`)
+              router.push(`/dashboard/product/${slug}/add-product`)
             }
           >
             New Product <Plus />
