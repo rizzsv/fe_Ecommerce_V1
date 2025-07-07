@@ -13,8 +13,6 @@ import {
   Plus,
   SearchIcon,
   Square,
-  SquarePen,
-  Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -39,10 +37,9 @@ import ActionDashboardDetail from "@/components/common/action-dashboard-detail";
 const DashboardProductDetailsFeature = ({
   params,
 }: {
-  params: { slug: string; id: string };
+  params: { slug: string };
 }) => {
   console.log("params.slug in DashboardProductDetailsFeature:", params.slug);
-  console.log("params.id in DashboardProductDetailsFeature:", params.id);
   const { router, data, isLoading, deleteProduct } =
     useDashboardProductDetailsFeature(params.slug);
   const pathname = usePathname();
@@ -167,7 +164,7 @@ const DashboardProductDetailsFeature = ({
                 ))}
               </>
             ) : (
-              dummy.map((item: IProductSchema) => (
+              data?.data?.map((item: IProductSchema) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <div className="flex justify-center items-center">
