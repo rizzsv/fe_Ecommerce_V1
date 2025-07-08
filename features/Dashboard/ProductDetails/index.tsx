@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useGetCategory from "@/hooks/useGetCategory";
 import { ICategory } from "@/types/category";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -29,8 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { IProductSchema } from "./hook/schema";
-import { dummySneakersProducts } from "@/lib/dummyProduct";
+import { IProductSchema } from "./schema";
 import { format } from "date-fns";
 import ActionDashboardDetail from "@/components/common/action-dashboard-detail";
 
@@ -39,14 +38,21 @@ const DashboardProductDetailsFeature = ({
 }: {
   params: { slug: string };
 }) => {
-  console.log("params.slug in DashboardProductDetailsFeature:", params.slug);
+  const pathname = usePathname();
+  const routeParams = useParams();
+  const slug = routeParams?.slug;
   const { router, data, isLoading, deleteProduct } =
     useDashboardProductDetailsFeature(params.slug);
-  const pathname = usePathname();
 
   const { data: dataCategory, isLoading: isLoadingCategory } = useGetCategory();
 
-  const dummy = dummySneakersProducts;
+  const categoryName = dataCategory?.data.find(
+    (c: ICategory) => c.slug === slug
+  )?.name;
+
+  const filteredProducts = data?.data.filter(
+    (product: IProductSchema) => product.categoryName === categoryName
+  );
 
   return (
     <main className="w-full h-full bg-white rounded-3xl border p-6 space-y-6">
@@ -74,7 +80,7 @@ const DashboardProductDetailsFeature = ({
           <Button
             variant="accent"
             onClick={() =>
-              router.push(`/dashboard/product/${params.slug}/add-product`)
+              router.push(`/dashboard/product/${slug}/add-product`)
             }
           >
             New Product <Plus />
@@ -164,7 +170,7 @@ const DashboardProductDetailsFeature = ({
                 ))}
               </>
             ) : (
-              data?.data?.map((item: IProductSchema) => (
+              filteredProducts?.map((item: IProductSchema) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <div className="flex justify-center items-center">
@@ -172,12 +178,18 @@ const DashboardProductDetailsFeature = ({
                     </div>
                   </TableCell>
                   <TableCell className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-slate-100 rounded-[10px]"></div>
+                    <div className="w-10 h-10 bg-slate-100 rounded-[10px]">
+                      <img
+                        src={`http://localhost:3000/${item.image}`}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     {item.name}
                   </TableCell>
-                  <TableCell>{item.price}</TableCell>
-                  <TableCell>{item.size}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell>Rp {item.price}</TableCell>
+                  <TableCell>-</TableCell>
+                  <TableCell>-</TableCell>
                   <TableCell>
                     {format(new Date(item.createdAt), "MM/dd/yy 'at' h:mm a")}
                   </TableCell>
@@ -186,7 +198,7 @@ const DashboardProductDetailsFeature = ({
                       variant="success"
                       className="py-1.5 px-2 rounded-[10px]"
                     >
-                      {item.status}
+                      Available
                     </Badge>
                   </TableCell>
                   <TableCell className="space-x-4">
@@ -199,10 +211,12 @@ const DashboardProductDetailsFeature = ({
                     </Button>
                     <ActionDashboardDetail
                       editHandler={() => {
-                        router.push(`/dashboard/field/${data?.data.slug}/edit`);
+                        router.push(
+                          `/dashboard/product/${slug}/${item.id}/edit`
+                        );
                       }}
                       deleteHandler={() => {
-                        deleteProduct(data?.data?.id);
+                        deleteProduct(item.id);
                       }}
                     />
                   </TableCell>

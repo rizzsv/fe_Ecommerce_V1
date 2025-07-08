@@ -17,38 +17,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ICreateProductSchema, CreateProductSchema } from "./schema";
-import useAddProduct from "./hook/useAddProduct";
 import { useParams } from "next/navigation";
 import useGetCategory from "@/hooks/useGetCategory";
 import ImageUploadSection from "@/components/common/images-upload-section";
+import useDashboardEditProductFeature from "./hook";
 
-const DashboardAddProductFeature = () => {
-  const { slug } = useParams() as { slug: string };
-  const form = useForm<ICreateProductSchema>({
-    resolver: zodResolver(CreateProductSchema),
-    defaultValues: {
-      name: "",
-      image: "",
-      stock: 0,
-      category: "",
-      price: 0,
-      description: "",
-      // status: "available",
-      variants: [{ size: "", color: "", stock: 0 }],
-    },
-  });
+const DashboardEditProductFeature = () => {
+  const { id } = useParams();
+  const {
+    form,
+    data,
+    isLoading,
+    mutate,
+    isPending,
+    image,
+    setImage,
+    isImageUpload,
+    setIsImageUpload,
+    handleImageUpload,
+  } = useDashboardEditProductFeature(id as string);
 
-  const { mutate, isPending } = useAddProduct(slug);
   const { data: categories } = useGetCategory();
 
   return (
     <main>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit((values) => mutate(values))}
+          onSubmit={form.handleSubmit((data) => {
+            mutate(data);
+          })}
           className="flex justify-between items-start gap-5"
         >
           <div className="p-6 bg-white rounded-3xl border self-start space-y-4">
@@ -296,4 +293,4 @@ const DashboardAddProductFeature = () => {
   );
 };
 
-export default DashboardAddProductFeature;
+export default DashboardEditProductFeature;
