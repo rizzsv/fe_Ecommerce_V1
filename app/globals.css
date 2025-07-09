@@ -122,9 +122,24 @@
   }
 }
 
+@font-face {
+  font-family: "Digital-7";
+  src: url("/fonts/digital-7.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer utilities {
   .container {
     @apply w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .font-digital {
+    font-family: "Digital-7", monospace;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0;
   }
 
   .text-stroke {

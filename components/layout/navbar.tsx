@@ -56,8 +56,8 @@ const Navbar = () => {
   }, [pathname, status, getUser, data]);
 
   return (
-    <nav className="container sticky top-0 z-50 bg-white rounded-[10px]">
-      <div className="flex justify-between items-center py-2 mt-8">
+    <nav className="sticky top-0 z-50 bg-white">
+      <div className="container flex justify-between items-center py-2 mt-8">
         <Link href="/" className="shrink-0">
           <span className="text-5xl font-spaceGrotesk font-normal tracking-normal leading-[100%]">
             FASCO

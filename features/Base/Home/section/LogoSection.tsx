@@ -12,7 +12,7 @@ const LOGOS = [
 
 const MarqueeLogos = () => {
   return (
-    <section className="container overflow-hidden py-20 shadow-[0px_20px_52.29px_0px_#4444440A]">
+    <section className="overflow-hidden py-20 shadow-[0px_20px_52.29px_0px_#4444440A]">
       <div className="whitespace-nowrap animate-marquee flex gap-16 w-max">
         {[...Array(6)].flatMap((_, i) =>
           LOGOS.map((logo, idx) => (
