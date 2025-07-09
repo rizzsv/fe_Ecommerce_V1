@@ -180,7 +180,7 @@ const DashboardProductDetailsFeature = ({
                   <TableCell className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-slate-100 rounded-[10px]">
                       <img
-                        src={`http://localhost:3000/${item.image}`}
+                        src={`http://localhost:3000/product/${item.image}`}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
