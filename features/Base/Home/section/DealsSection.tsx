@@ -19,7 +19,7 @@ const DealsSection = () => {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Scelerisque dui...
               </p>
-              <Button className="px-16 py-7 rounded-[10px] mb-12">
+              <Button className="px-16 py-6 rounded-[10px] mb-12">
                 Buy Now
               </Button>
 

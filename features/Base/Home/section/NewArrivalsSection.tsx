@@ -27,11 +27,11 @@ const NewArrivalsSection = () => {
   return (
     <section id="new-arrivals" className="container py-36">
       <h1 className="text-[46px] font-normal text-center flex flex-col gap-5 max-w-2xl mx-auto">
-        New Arrivals{" "}
+        New Arrivals
         <span className="text-base text-gray-400">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque
           duis ultrices sollicitudin aliquam sem. Scelerisque duis ultrices
-          sollicitudin{" "}
+          sollicitudin
         </span>
       </h1>
 
@@ -40,7 +40,7 @@ const NewArrivalsSection = () => {
           <Button
             key={index}
             onClick={() => setActiveCategory(item.name)}
-            className={`text-base rounded-[10px] py-6 px-7 font-medium ${
+            className={`text-base rounded-[10px] py-6 px-6 font-medium ${
               activeCategory === item.name
                 ? "bg-black text-white"
                 : "bg-gray-50 text-[#8a8a8a] hover:bg-black hover:text-white"
@@ -103,7 +103,7 @@ const NewArrivalsSection = () => {
       </div>
 
       <div className="flex justify-center mt-12">
-        <Button className="px-16 py-7 rounded-[10px]">View More</Button>
+        <Button className="px-16 py-6 rounded-[10px]">View More</Button>
       </div>
     </section>
   );

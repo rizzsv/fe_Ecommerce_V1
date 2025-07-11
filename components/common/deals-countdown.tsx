@@ -1,28 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DealsCountdown = () => {
-  const calculateTimeLeft = () => {
-    const deadline = new Date("2025-07-20T00:00:00");
-    const now = new Date();
-    const difference = deadline.getTime() - now.getTime();
-
-    if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
-    };
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState<{
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  } | null>(null);
 
   useEffect(() => {
+    const calculateTimeLeft = () => {
+      const deadline = new Date("2025-07-20T00:00:00");
+      const now = new Date();
+      const diff = deadline.getTime() - now.getTime();
+
+      return {
+        days: Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24))),
+        hours: Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24)),
+        minutes: Math.max(0, Math.floor((diff / 1000 / 60) % 60)),
+        seconds: Math.max(0, Math.floor((diff / 1000) % 60)),
+      };
+    };
+
+    setTimeLeft(calculateTimeLeft());
+
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -32,19 +36,25 @@ const DealsCountdown = () => {
 
   const pad = (n: number) => n.toString().padStart(2, "0");
 
+  const items = ["Days", "Hr", "Mins", "Sec"];
+
   return (
     <div className="flex gap-7 text-[#484848]">
-      {[
-        { label: "Days", value: pad(timeLeft.days) },
-        { label: "Hr", value: pad(timeLeft.hours) },
-        { label: "Mins", value: pad(timeLeft.minutes) },
-        { label: "Sec", value: pad(timeLeft.seconds) },
-      ].map(({ label, value }) => (
-        <div key={label} className="text-center">
-          <div className="text-3xl font-normal font-digital mb-4 p-3 bg-white shadow-[0px_4px_14px_1px_#00000029]">
-            {value}
-          </div>
-          <div className="text-2xl font-normal">{label}</div>
+      {items.map((label, i) => (
+        <div key={label} className="text-center space-y-2">
+          {timeLeft ? (
+            <>
+              <div className="text-3xl font-normal font-digital p-3 bg-white shadow-[0px_4px_14px_1px_#00000029] min-w-[60px]">
+                {pad(Object.values(timeLeft)[i])}
+              </div>
+              <div className="text-2xl font-normal">{label}</div>
+            </>
+          ) : (
+            <>
+              <Skeleton className="h-[52px] w-[60px] rounded" />
+              <Skeleton className="h-[24px] w-[40px] rounded mx-auto" />
+            </>
+          )}
         </div>
       ))}
     </div>

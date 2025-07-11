@@ -134,6 +134,10 @@
     @apply w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  .clip-trapezoid {
+    clip-path: polygon(0 0, 100% 0, 70% 100%, 0% 100%);
+  }
+
   .font-digital {
     font-family: "Digital-7", monospace;
     font-weight: normal;

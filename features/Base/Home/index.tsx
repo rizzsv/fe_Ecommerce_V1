@@ -6,7 +6,10 @@ import {
   NewArrivalsSection,
   LogoSection,
   DealsSection,
+  PackagesSection,
+  FollowUsSection,
   TestimonialSection,
+  SubscribeSection,
 } from "./section";
 import { getCookie } from "@/lib/utils";
 import FloatingButtons from "@/components/common/floating-buttons";
@@ -24,8 +27,10 @@ const HomepageFeature = () => {
       <LogoSection />
       <DealsSection />
       <NewArrivalsSection />
-      {/* You can add more sections here as needed */}
+      <PackagesSection />
+      <FollowUsSection />
       {isLogged && <TestimonialSection />}
+      <SubscribeSection />
       <FloatingButtons />
     </main>
   );
