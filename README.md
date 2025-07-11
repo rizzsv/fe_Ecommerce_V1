@@ -90,6 +90,7 @@ Autentikasi pengguna disimpan dalam cookie bernama `access_token`.
 - Validasi form (dengan zod)
 - Proteksi halaman via middleware
 - Fetching API authentication
+- Slicing dashboard admin sidebar, navbar, CRUD product
 
 ### 🔄 Sedang/Tahap Selanjutnya
 
@@ -100,7 +101,7 @@ Autentikasi pengguna disimpan dalam cookie bernama `access_token`.
 - [ ] Keranjang belanja
 - [ ] Wishlist produk
 - [ ] Riwayat pemesanan
-- [ ] Dashboard Admin
+- [x] Dashboard Admin
 
 ---
 
