@@ -44,7 +44,7 @@ const DealsCountdown = () => {
         <div key={label} className="text-center space-y-2">
           {timeLeft ? (
             <>
-              <div className="text-3xl font-normal font-digital p-3 bg-white shadow-[0px_4px_14px_1px_#00000029] min-w-[60px]">
+              <div className="text-3xl font-normal font-digital p-3 bg-white shadow-[0px_4px_14px_1px_#00000029] min-w-[60px] rounded-[10px]">
                 {pad(Object.values(timeLeft)[i])}
               </div>
               <div className="text-2xl font-normal">{label}</div>

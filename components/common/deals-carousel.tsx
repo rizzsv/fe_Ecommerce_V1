@@ -7,14 +7,46 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const IMAGES_ITEM = [
-  "/images/deals1-img.png",
-  "/images/deals2-img.png",
-  "/images/deals3-img.jpg",
-  "/images/deals4-img.jpg",
-  "/images/deals5-img.jpg",
-  "/images/deals6-img.jpg",
-  "/images/deals7-img.jpg",
-  "/images/deals8-img.jpg",
+  {
+    src: "/images/deals1-img.png",
+    label: "Spring Sale",
+    promo: "30% OFF",
+  },
+  {
+    src: "/images/deals2-img.png",
+    label: "New Drop",
+    promo: "20% OFF",
+  },
+  {
+    src: "/images/deals3-img.jpg",
+    label: "Flash Sale",
+    promo: "25% OFF",
+  },
+  {
+    src: "/images/deals4-img.jpg",
+    label: "Summer",
+    promo: "15% OFF",
+  },
+  {
+    src: "/images/deals5-img.jpg",
+    label: "Clearance",
+    promo: "50% OFF",
+  },
+  {
+    src: "/images/deals6-img.jpg",
+    label: "Hot Picks",
+    promo: "10% OFF",
+  },
+  {
+    src: "/images/deals7-img.jpg",
+    label: "Featured",
+    promo: "Free Shipping",
+  },
+  {
+    src: "/images/deals8-img.jpg",
+    label: "Season End",
+    promo: "Buy 1 Get 1",
+  },
 ];
 
 const DealsCarousel = () => {
@@ -84,7 +116,7 @@ const DealsCarousel = () => {
       <div className="relative z-0">
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex">
-            {IMAGES_ITEM.map((src, index) => (
+            {IMAGES_ITEM.map((item, index) => (
               <div
                 key={index}
                 ref={(el) => {
@@ -97,12 +129,18 @@ const DealsCarousel = () => {
                 }}
               >
                 <Image
-                  src={src}
+                  src={item.src}
                   alt={`Deal ${index + 1}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 320px"
                   className="object-cover"
                 />
+                <div className="absolute bottom-6 left-6 bg-white/80 backdrop-blur-xl px-6 py-6 rounded space-y-2">
+                  <p className="text-base font-normal">
+                    {String(index + 1).padStart(2, "0")} — {item.label}
+                  </p>
+                  <p className="font-normal text-2xl">{item.promo}</p>
+                </div>
               </div>
             ))}
           </div>
