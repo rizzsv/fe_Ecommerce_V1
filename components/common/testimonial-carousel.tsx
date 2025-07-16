@@ -106,13 +106,14 @@ const TestimonialCarousel = () => {
                   ${index === 2 ? "translate-x-80" : ""}
                 `}
               >
-                <div className="bg-white rounded-[10px] shadow-[0px_20px_60px_0px_#2E213D14] py-16 px-12 h-auto w-[720px] flex justify-between items-center gap-20">
+                <div className="bg-white rounded-[10px] shadow-[0px_20px_60px_0px_#2E213D14] py-16 px-12 h-auto w-[720px] flex justify-between items-center gap-16">
                   <div className="relative w-60 h-60 shrink-0">
                     <div className="absolute -bottom-4 -left-4 w-full h-full bg-gray-300 rounded-xl z-0" />
                     <Image
                       src={testimonial.img}
                       alt={testimonial.name}
                       fill
+                      sizes="(max-width: 768px) 100vw, 400px"
                       className="relative z-10 rounded-xl w-full h-full object-cover"
                     />
                   </div>
