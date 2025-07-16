@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { IProductSchema } from "./schema";
 import { format } from "date-fns";
 import ActionDashboardDetail from "@/components/common/action-dashboard-detail";
+import { API_URL } from "@/constants/config";
 
 const DashboardProductDetailsFeature = ({
   params,
@@ -180,7 +181,7 @@ const DashboardProductDetailsFeature = ({
                   <TableCell className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-slate-100 rounded-[10px]">
                       <img
-                        src={`http://localhost:3000/${item.image}`}
+                        src={`${API_URL}/product/${item.image}`}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
