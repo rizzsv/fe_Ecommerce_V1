@@ -3,7 +3,6 @@
 import { Input } from "@/components/ui/input";
 import useDashboardProductDetailsFeature from "./hook";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown,
@@ -13,6 +12,7 @@ import {
   Plus,
   SearchIcon,
   Square,
+  CheckSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -33,6 +33,13 @@ import { IProductSchema } from "./schema";
 import { format } from "date-fns";
 import ActionDashboardDetail from "@/components/common/action-dashboard-detail";
 import { API_URL } from "@/constants/config";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DashboardProductDetailsFeature = ({
   params,
@@ -42,8 +49,22 @@ const DashboardProductDetailsFeature = ({
   const pathname = usePathname();
   const routeParams = useParams();
   const slug = routeParams?.slug;
-  const { router, data, isLoading, deleteProduct } =
-    useDashboardProductDetailsFeature(params.slug);
+  const {
+    router,
+    data,
+    isLoading,
+    deleteProduct,
+    page,
+    setPage,
+    quantity,
+    setQuantity,
+    periode,
+    setPeriode,
+    selectedItems,
+    toggleSelectedItem,
+    resetSelectedItems,
+    handleExportToPDF,
+  } = useDashboardProductDetailsFeature(params.slug);
 
   const { data: dataCategory, isLoading: isLoadingCategory } = useGetCategory();
 
@@ -75,7 +96,20 @@ const DashboardProductDetailsFeature = ({
           <Button variant="outlineOriginal">
             Filter <ListFilter />
           </Button>
-          <Button variant="outlineOriginal">
+          <Button
+            variant="outlineOriginal"
+            onClick={() => {
+              const selectedProducts = filteredProducts?.filter(
+                (product: IProductSchema) => selectedItems.includes(product.id)
+              );
+
+              if (selectedProducts && selectedProducts.length > 0) {
+                handleExportToPDF(selectedProducts, slug as string);
+              } else if (filteredProducts && filteredProducts.length > 0) {
+                handleExportToPDF(filteredProducts, slug as string);
+              }
+            }}
+          >
             Export <Download />
           </Button>
           <Button
@@ -120,8 +154,39 @@ const DashboardProductDetailsFeature = ({
           <TableHeader>
             <TableRow className="bg-neutral-50">
               <TableHead>
-                <div className="flex justify-center items-center">
-                  <Square className="w-6 h-6" />
+                <div
+                  className="flex justify-center items-center cursor-pointer"
+                  onClick={() => {
+                    const ids =
+                      filteredProducts?.map(
+                        (item: IProductSchema) => item.id
+                      ) || [];
+                    const isAllSelected = ids.every((id: string) =>
+                      selectedItems.includes(id)
+                    );
+                    if (isAllSelected) {
+                      resetSelectedItems();
+                    } else {
+                      ids.forEach((id: string) => {
+                        if (!selectedItems.includes(id)) toggleSelectedItem(id);
+                      });
+                    }
+                  }}
+                >
+                  {(() => {
+                    const ids =
+                      filteredProducts?.map(
+                        (item: IProductSchema) => item.id
+                      ) || [];
+                    const isAllSelected =
+                      ids.length > 0 &&
+                      ids.every((id: string) => selectedItems.includes(id));
+                    return isAllSelected ? (
+                      <CheckSquare className="w-6 h-6 text-blue-600" />
+                    ) : (
+                      <Square className="w-6 h-6 text-gray-500" />
+                    );
+                  })()}
                 </div>
               </TableHead>
               <TableHead>
@@ -174,8 +239,15 @@ const DashboardProductDetailsFeature = ({
               filteredProducts?.map((item: IProductSchema) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <div className="flex justify-center items-center">
-                      <Square className="w-6 h-6" />
+                    <div
+                      className="flex justify-center items-center cursor-pointer"
+                      onClick={() => toggleSelectedItem(item.id)}
+                    >
+                      {selectedItems.includes(item.id) ? (
+                        <CheckSquare className="w-6 h-6 text-blue-600" />
+                      ) : (
+                        <Square className="w-6 h-6 text-gray-500" />
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="flex items-center gap-2">
@@ -189,8 +261,16 @@ const DashboardProductDetailsFeature = ({
                     {item.name}
                   </TableCell>
                   <TableCell>Rp {item.price}</TableCell>
-                  <TableCell>-</TableCell>
-                  <TableCell>-</TableCell>
+                  <TableCell>
+                    {item.variants.map((variant) => variant.size).join(", ")}
+                  </TableCell>
+                  <TableCell>
+                    {item.variants.reduce(
+                      (total, variant) => total + variant.stock,
+                      0
+                    )}
+                  </TableCell>
+
                   <TableCell>
                     {format(new Date(item.createdAt), "MM/dd/yy 'at' h:mm a")}
                   </TableCell>
@@ -230,20 +310,51 @@ const DashboardProductDetailsFeature = ({
 
       <section className="flex justify-between items-center text-sm font-normal">
         <p>
-          <span className="text-blue-600">1</span> - 10 of 13 Pages
+          <span className="text-blue-600">{(page - 1) * quantity + 1}</span> -{" "}
+          <span>
+            {Math.min(page * quantity, data?.metaData?.totalItem || 0)}
+          </span>{" "}
+          of {data?.metaData?.totalItem || 0} Items
         </p>
         <div className="flex space-x-4">
           <div className="flex justify-center items-center gap-2">
             <p>The page on </p>
-            <Button variant="outlineOriginal">
-              1 <ChevronDown />
-            </Button>
+            <Select
+              value={quantity.toString()}
+              onValueChange={(value) => {
+                setPage(1);
+                setQuantity(Number(value));
+              }}
+            >
+              <SelectTrigger className="min-w-[43px] px-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 50].map((qty) => (
+                  <SelectItem key={qty} value={qty.toString()}>
+                    {qty}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-x-2">
-            <Button variant="outlineOriginal">
+            <Button
+              variant="outlineOriginal"
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+            >
               <ChevronLeft />
             </Button>
-            <Button variant="outlineOriginal">
+            <Button
+              variant="outlineOriginal"
+              onClick={() =>
+                setPage((prev) =>
+                  prev < (data?.metaData?.totalPages || 1) ? prev + 1 : prev
+                )
+              }
+              disabled={page === data?.metaData?.totalPages}
+            >
               <ChevronRight />
             </Button>
           </div>

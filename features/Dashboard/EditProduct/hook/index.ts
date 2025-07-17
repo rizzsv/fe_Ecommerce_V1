@@ -8,18 +8,15 @@ import { axiosInstanceToken } from "@/lib/axios";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
 import useGetProductsById from "./useGetProductById";
-import {
-  CreateProductSchema,
-  ICreateProductSchema,
-} from "../../AddProduct/schema";
+import { EditProductSchema, IEditProductSchema } from "../schema";
 
 const useDashboardEditProductFeature = (slug: string) => {
   const router = useRouter();
   const [image, setImage] = useState<string | File>("");
   const [isImageUpload, setIsImageUpload] = useState<boolean>(false);
 
-  const form = useForm<ICreateProductSchema>({
-    resolver: zodResolver(CreateProductSchema),
+  const form = useForm<IEditProductSchema>({
+    resolver: zodResolver(EditProductSchema),
     defaultValues: {
       name: "",
       image: "",
@@ -52,18 +49,41 @@ const useDashboardEditProductFeature = (slug: string) => {
   }, [data]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: ICreateProductSchema) => {
+    mutationFn: async (data: IEditProductSchema) => {
+      const formData = new FormData();
+
+      formData.append("id", data.id || "");
+      formData.append("name", data.name ?? "");
+      formData.append(
+        "slug",
+        (data.name ?? "").toLowerCase().replace(/\s/g, "-")
+      );
+      formData.append("price", String(data.price ?? 0));
+      formData.append("stock", String(data.stock ?? 0));
+      formData.append("description", data.description ?? "");
+      formData.append("category", data.category ?? "");
+
+      if (image instanceof File) {
+        formData.append("image", image);
+      } else {
+        formData.append("image", image);
+      }
+
+      formData.append("variants", JSON.stringify(data.variants || []));
+
       const response = await axiosInstanceToken.put(
         "/E-Commerce/api/v1/product/update",
+        formData,
         {
-          ...data,
-          slug: data.name.toLowerCase().replace(/\s/g, "-"),
-          image,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
       return response.data;
     },
+
     onSuccess: (data) => {
       toast.success(data.message);
       form.reset();

@@ -9,6 +9,15 @@ export const ProductSchema = z.object({
   categoryId: z.string(),
   categoryName: z.string(),
   createdAt: z.string(),
+  variants: z.array(
+    z.object({
+      id: z.string(),
+      productId: z.string(),
+      size: z.string(),
+      color: z.string(),
+      stock: z.number(),
+    })
+  ),
 });
 
 export type IProductSchema = z.infer<typeof ProductSchema>;

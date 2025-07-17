@@ -5,15 +5,30 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { axiosInstanceToken } from "@/lib/axios";
 import useGetProducts from "./useGetProduct";
+import { useState } from "react";
+import useProductFilter from "./useProductFilter";
+import useProductExport from "./useProductExport";
 
 const useDashboardProductDetailsFeature = (
   slug: string,
-  periode: string = new Date().getFullYear().toString(),
-  page: number = 1,
-  quantity: number = 5
+  initialPeriode: string = new Date().getFullYear().toString()
 ) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const [periode, setPeriode] = useState(initialPeriode);
+  const [page, setPage] = useState(1);
+  const [quantity, setQuantity] = useState(10);
+
+  const {
+    selectedItems,
+    toggleSelectedItem,
+    resetSelectedItems,
+    selectAll,
+    isSelected,
+  } = useProductFilter();
+
+  const { handleExportToPDF } = useProductExport();
 
   const { data, isLoading } = useGetProducts(periode, page, quantity);
 
@@ -29,6 +44,7 @@ const useDashboardProductDetailsFeature = (
       queryClient.invalidateQueries({
         queryKey: ["products", periode, page, quantity],
       });
+      resetSelectedItems();
     },
     onError: (error: any) => {
       toast.error(
@@ -42,6 +58,18 @@ const useDashboardProductDetailsFeature = (
     data,
     isLoading,
     deleteProduct,
+    page,
+    setPage,
+    quantity,
+    setQuantity,
+    periode,
+    setPeriode,
+    selectedItems,
+    toggleSelectedItem,
+    resetSelectedItems,
+    selectAll,
+    isSelected,
+    handleExportToPDF,
   };
 };
 

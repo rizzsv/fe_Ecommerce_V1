@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ThumbnailUpload from "./thumbnails-upload";
+import { API_URL } from "@/constants/config";
 
 interface Props {
   value: File | null;
@@ -31,7 +32,9 @@ const ImageUploadSection = ({ value, onChange }: Props) => {
       setPreviews((prev) => {
         const updated = [...prev];
         updated[0] =
-          value instanceof File ? URL.createObjectURL(value) : `/${value}`;
+          value instanceof File
+            ? URL.createObjectURL(value)
+            : `${API_URL}/product/${value}`;
         return updated;
       });
     }
