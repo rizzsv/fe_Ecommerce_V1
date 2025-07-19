@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const EditProductSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().min(1, "ID is required"),
   name: z.string().optional(),
   description: z.string().optional(),
   price: z.coerce.number().optional(),

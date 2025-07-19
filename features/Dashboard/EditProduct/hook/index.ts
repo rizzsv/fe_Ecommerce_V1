@@ -10,8 +10,9 @@ import { useParams, useRouter } from "next/navigation";
 import useGetProductsById from "./useGetProductById";
 import { EditProductSchema, IEditProductSchema } from "../schema";
 
-const useDashboardEditProductFeature = (slug: string) => {
+const useDashboardEditProductFeature = () => {
   const router = useRouter();
+  const { id, slug } = useParams();
   const [image, setImage] = useState<string | File>("");
   const [isImageUpload, setIsImageUpload] = useState<boolean>(false);
 
@@ -29,13 +30,13 @@ const useDashboardEditProductFeature = (slug: string) => {
     },
   });
 
-  const { id } = useParams();
   const { data, isLoading } = useGetProductsById(id as string);
 
   useEffect(() => {
     if (data?.data) {
       const product = data.data;
       form.reset({
+        id: product.id,
         name: product.name,
         image: product.image,
         stock: product.stock,
@@ -66,10 +67,24 @@ const useDashboardEditProductFeature = (slug: string) => {
       if (image instanceof File) {
         formData.append("image", image);
       } else {
-        formData.append("image", image);
+        formData.append("existingImage", image);
       }
 
-      formData.append("variants", JSON.stringify(data.variants || []));
+      if (data.variants) {
+        data.variants.forEach((variant, index) => {
+          formData.append(`variants[${index}][id]`, variant.id || "");
+          formData.append(
+            `variants[${index}][productId]`,
+            variant.productId || ""
+          );
+          formData.append(`variants[${index}][size]`, variant.size || "");
+          formData.append(`variants[${index}][color]`, variant.color || "");
+          formData.append(
+            `variants[${index}][stock]`,
+            String(variant.stock || 0)
+          );
+        });
+      }
 
       const response = await axiosInstanceToken.put(
         "/E-Commerce/api/v1/product/update",
@@ -86,7 +101,6 @@ const useDashboardEditProductFeature = (slug: string) => {
 
     onSuccess: (data) => {
       toast.success(data.message);
-      form.reset();
       router.push(`/dashboard/product/${slug}`);
     },
     onError: (error: any) => {

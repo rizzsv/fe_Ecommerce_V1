@@ -17,13 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useGetCategory from "@/hooks/useGetCategory";
 import ImageUploadSection from "@/components/common/images-upload-section";
 import useDashboardEditProductFeature from "./hook";
 
 const DashboardEditProductFeature = () => {
-  const { id } = useParams();
+  const router = useRouter();
   const {
     form,
     data,
@@ -35,7 +35,7 @@ const DashboardEditProductFeature = () => {
     isImageUpload,
     setIsImageUpload,
     handleImageUpload,
-  } = useDashboardEditProductFeature(id as string);
+  } = useDashboardEditProductFeature();
 
   const { data: categories } = useGetCategory();
 
@@ -44,6 +44,11 @@ const DashboardEditProductFeature = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((data) => {
+            if (image instanceof File) {
+              console.log("📸 Gambar berhasil diganti:", image.name);
+            } else {
+              console.log("🧾 Gambar tidak diganti, pakai yang lama:", image);
+            }
             mutate(data);
           })}
           className="flex justify-between items-start gap-5"
@@ -268,7 +273,10 @@ const DashboardEditProductFeature = () => {
                     <FormControl>
                       <ImageUploadSection
                         value={field.value as File}
-                        onChange={field.onChange}
+                        onChange={(value) => {
+                          field.onChange(value);
+                          setImage(value);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -276,7 +284,15 @@ const DashboardEditProductFeature = () => {
                 )}
               />
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-between">
+              <Button
+                variant="outline"
+                type="button"
+                className="mt-6 text-blue-600"
+                onClick={() => router.back()}
+              >
+                Discard Changes
+              </Button>
               <Button
                 variant="accent"
                 type="submit"
