@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Store } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import useDashboardProductDetailsFeature from "@/features/Dashboard/ProductDetails/hook";
+import { getTotalStock } from "@/lib/stock";
+import { Product } from "@/types/product";
 
 const SidebarProductSubmenu = ({
   isSidebarOpen,
@@ -15,6 +18,11 @@ const SidebarProductSubmenu = ({
   useEffect(() => {
     if (isActive) setOpen(true);
   }, [isActive]);
+
+  const { data, isLoading } = useDashboardProductDetailsFeature("all");
+
+  const products: Product[] = data?.data ?? [];
+  const totalStock = getTotalStock(products);
 
   const SUBMENU_ITEM = [
     { label: "Sneakers", slug: "sneakers" },
@@ -35,7 +43,11 @@ const SidebarProductSubmenu = ({
       >
         <div className="flex items-center gap-2">
           <Store className="w-6 h-6" />
-          {isSidebarOpen && <span className="text-sm">Product (119)</span>}
+          {isSidebarOpen && (
+            <span className="text-sm">
+              Product ({isLoading ? "..." : totalStock})
+            </span>
+          )}
         </div>
         {isSidebarOpen &&
           (open ? (

@@ -26,7 +26,7 @@ const useDashboardEditProductFeature = () => {
       price: 0,
       description: "",
       // status: "available",
-      variants: [{ size: "", color: "", stock: 0 }],
+      variants: [{ size: "", color: "" }],
     },
   });
 
@@ -79,10 +79,6 @@ const useDashboardEditProductFeature = () => {
           );
           formData.append(`variants[${index}][size]`, variant.size || "");
           formData.append(`variants[${index}][color]`, variant.color || "");
-          formData.append(
-            `variants[${index}][stock]`,
-            String(variant.stock || 0)
-          );
         });
       }
 

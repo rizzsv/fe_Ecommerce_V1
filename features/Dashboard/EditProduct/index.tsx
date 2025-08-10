@@ -171,27 +171,6 @@ const DashboardEditProductFeature = () => {
             </div>
             <FormField
               control={form.control}
-              name="variants.0.stock"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-bold">Stock</FormLabel>
-                  <FormControl>
-                    <Input
-                      variant="solid"
-                      placeholder="Input stock"
-                      value={field.value}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === "" ? "" : Number(value));
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="stock"
               render={({ field }) => (
                 <FormItem>

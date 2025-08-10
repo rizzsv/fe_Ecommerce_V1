@@ -40,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getTotalStockByCategory } from "@/lib/stock";
 
 const DashboardProductDetailsFeature = ({
   params,
@@ -142,7 +143,8 @@ const DashboardProductDetailsFeature = ({
                 className={`py-1 w-[250px] text-center text-sm font-bold rounded-lg
             ${isActive ? "bg-blue-100 text-blue-600" : "text-neutral-500 hover:bg-blue-100 hover:text-blue-600"}`}
               >
-                {item.name}
+                {item.name} (
+                {getTotalStockByCategory(data?.data || [], item.id)})
               </Link>
             );
           })
@@ -264,22 +266,19 @@ const DashboardProductDetailsFeature = ({
                   <TableCell>
                     {item.variants.map((variant) => variant.size).join(", ")}
                   </TableCell>
-                  <TableCell>
-                    {item.variants.reduce(
-                      (total, variant) => total + variant.stock,
-                      0
-                    )}
-                  </TableCell>
+                  <TableCell>{item.stock}</TableCell>
 
                   <TableCell>
                     {format(new Date(item.createdAt), "MM/dd/yy 'at' h:mm a")}
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant="success"
+                      variant={
+                        item.status === "Available" ? "success" : "error"
+                      }
                       className="py-1.5 px-2 rounded-[10px]"
                     >
-                      Available
+                      {item.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="space-x-4">

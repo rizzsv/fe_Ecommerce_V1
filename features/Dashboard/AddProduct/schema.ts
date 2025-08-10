@@ -22,7 +22,6 @@ export const CreateProductSchema = z.object({
       productId: z.string().optional(),
       size: z.string().min(1, "Size is required"),
       color: z.string().min(1, "Color is required"),
-      stock: z.coerce.number().min(0, "Stock must be at least 0"),
     })
   ),
 });

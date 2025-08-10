@@ -8,6 +8,8 @@ export const ProductSchema = z.object({
   image: z.string().min(1, "Image is required"),
   categoryId: z.string(),
   categoryName: z.string(),
+  stock: z.number(),
+  status: z.string(),
   createdAt: z.string(),
   variants: z.array(
     z.object({
@@ -16,6 +18,7 @@ export const ProductSchema = z.object({
       size: z.string(),
       color: z.string(),
       stock: z.number(),
+      status: z.string(),
     })
   ),
 });
