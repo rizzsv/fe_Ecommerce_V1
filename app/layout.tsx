@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
+import { Plus_Jakarta_Sans, Space_Grotesk, Poppins } from "next/font/google";
 import "./globals.css";
 import Provider from "@/components/layout/provider";
 
@@ -13,6 +13,12 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -29,9 +35,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${plusJakartaSans.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${plusJakartaSans.variable} ${spaceGrotesk.variable} ${poppins.variable} antialiased`}
       >
         <Provider>{children}</Provider>
       </body>
